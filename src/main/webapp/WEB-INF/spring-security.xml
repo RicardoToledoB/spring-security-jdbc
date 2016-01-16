@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bean:beans
+    xmlns:bean="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+    xmlns="http://www.springframework.org/schema/security" 
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+    http://www.springframework.org/schema/security 
+    http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+  
+    
+    <http auto-config="true">
+        <intercept-url pattern="/ejecutivo/*" access="hasRole('ROLE_ejecutivo')" />
+        <intercept-url pattern="/administrador/*" access="hasRole('ROLE_administrador')" />
+    </http>
+    
+    <!--<authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <user name="admin" password="admin" authorities="ROLE_administrador" />
+                <user name="ejecutivo" password="ejecutivo" authorities="ROLE_ejecutivo" />                                
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>-->
+    
+    <authentication-manager>
+        <authentication-provider>
+            <jdbc-user-service data-source-ref="dataSource"
+                               users-by-username-query ="SELECT username, password,enabled FROM usuarios where username=?"
+                               authorities-by-username-query="SELECT username, nombre FROM usuarios 
+                                                              INNER JOIN  roles 
+                                                              WHERE roles.rol_id = usuarios.rol_id and usuarios.username=? "/>
+        </authentication-provider>
+    </authentication-manager>
+    
+</bean:beans>
